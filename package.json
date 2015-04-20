@@ -12,6 +12,7 @@
   "dependencies": {
     "a-big-triangle": "^1.0.0",
     "canvas-fit": "^1.4.0",
+    "color-style": "^1.0.0",
     "dom-events": "^0.1.1",
     "domready": "^1.0.7",
     "gl-context": "^0.1.1",

@@ -8,7 +8,7 @@ module.exports = function(gl, cb) {
   const video = document.createElement('video')
   video.setAttribute('loop', true)
   video.setAttribute('muted', 'muted')
-  addSource('video/mp4', 'assets/motion-rgb1.mp4')
+  addSource('video/mp4', 'assets/motion-rgb3.mp4')
 
   const ready = () => {
     const texture = createTexture(gl, video)

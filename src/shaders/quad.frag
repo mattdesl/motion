@@ -22,7 +22,7 @@ void main() {
   float gray = blur(uv, texel * 20.0, aspect).r;
   float vignette = length(uv - 0.5);
 
-  gray = smoothstep(0.01, 0.52, gray) * 1.0;
+  gray = smoothstep(0.01, 0.82, gray) * 1.0;
   gray *= smoothstep(0.5, 0.0, vignette);
   gl_FragColor = vec4(vec3(gray), 1.0);
 }

@@ -5,6 +5,10 @@ import createEngine from './src/engine'
 import createVideo from './src/video'
 import createImage from './src/image'
 import assign from 'object-assign'
+import colorStyle from 'color-style'
+
+const clear = require('./src/clear')
+const background = clear.rgb.map(x => x*255)
 
 const gl = createContext({
   alpha: false, antialias: false
@@ -34,11 +38,12 @@ require('domready')(() => {
   resize()
 
   assign(document.body.style, {
-    background: '#193237',
+    background: colorStyle(background),
     margin: '0'
   })
   document.body.appendChild(canvas)
   const loop = createLoop(draw)
+  clear(gl)
 
   createVideo(gl, (err, texture) => {
     if (err)
@@ -56,6 +61,8 @@ require('domready')(() => {
       // video.style.top = '0'
       // video.style.left = '0'
       // video.style.zIndex = 100
+      let time = 0
+      let duration = 1
     }
     loop.start()
   })

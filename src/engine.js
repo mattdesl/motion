@@ -1,4 +1,5 @@
-const glslify   = require('glslify')
+const clear = require('./clear')
+const glslify = require('glslify')
 const Particles = require('gl-particles')
 const random = require('gl-vec2/random')
 const getPixels = require('gl-texture2d-pixels')
@@ -92,11 +93,10 @@ export default function(gl) {
     gl.blendFunc(gl.ONE, gl.ONE)
     gl.viewport(0, 0, width, height)
     
-    // gl.clearColor(0, 0, 0, 1)
-    gl.clearColor(25/255, 50/255, 55/255, 1.0)
-    gl.clear(gl.COLOR_BUFFER_BIT)
+    clear(gl)
 
     quadShader.bind()
+    quadShader.uniforms.time = time
     quadShader.uniforms.motion = 1
     quadShader.uniforms.resolution = resolution
     triangle(gl)
