@@ -5,3 +5,4 @@ node_modules
 bundle.js
 assets/
 !assets/ballet.mp4
+!assets/ballet.webm

@@ -7,11 +7,10 @@ module.exports = function(gl, cb) {
   cb = cb || noop
 
   const video = document.createElement('video')
-  const src = 'assets/ballet2.mp4'
   video.setAttribute('loop', true)
   video.setAttribute('muted', 'muted')
-  video.src = src
-  // addSource('video/mp4', src)
+  addSource('video/webm', 'assets/ballet2.webm')
+  // addSource('video/mp4', 'assets/ballet2.mp4')
   video.load()
 
   const ready = once(() => {
@@ -33,20 +32,24 @@ module.exports = function(gl, cb) {
     cb = noop
   })
   
-  const ff = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
-  if (ff) {
-    fixLoop(video)
-  }
+  // const ff = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+  // if (ff) {
+  //   fixLoop(video)
+  // }
   events.on(video, 'canplay', ready)
 
   function fixLoop(video) {
-    events.on(video, 'timeupdate', () => {
-      //grr.. firefox 'ended' and 'loop' not working
-      if (Math.round(video.currentTime) >= Math.round(video.duration)) {
-        video.src = src
-        video.play()
-      }
-    })
+    // events.on(video, 'ended', () => {
+    //   console.log("END")
+    //   video.play()
+    // })
+    // events.on(video, 'timeupdate', () => {
+    //   //grr.. firefox 'ended' and 'loop' not working
+    //   if (Math.round(video.currentTime) >= Math.round(video.duration)) {
+    //     video.src = src
+    //     video.play()
+    //   }
+    // })
   }
 
   function addSource(type, path) {
