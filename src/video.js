@@ -1,5 +1,6 @@
 import createTexture from 'gl-texture2d'
 import events from 'dom-events'
+import once from 'once'
 const noop = () => {}
 
 module.exports = function(gl, cb) {
@@ -13,15 +14,16 @@ module.exports = function(gl, cb) {
   // addSource('video/mp4', src)
   video.load()
 
-  const ready = () => {
+  const ready = once(() => {
     const texture = createTexture(gl, video)
     texture.minFilter = gl.LINEAR
     texture.update = update.bind(null, texture)
     texture.video = video
+    console.log("Ready.")
 
     cb(null, texture)
     cb = noop
-  }
+  })
 
   if (video.readyState > video.HAVE_FUTURE_DATA) 
     ready()
@@ -33,6 +35,11 @@ module.exports = function(gl, cb) {
   
   const ff = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
   if (ff) {
+    fixLoop(video)
+  }
+  events.on(video, 'canplay', ready)
+
+  function fixLoop(video) {
     events.on(video, 'timeupdate', () => {
       //grr.. firefox 'ended' and 'loop' not working
       if (Math.round(video.currentTime) >= Math.round(video.duration)) {
@@ -41,7 +48,6 @@ module.exports = function(gl, cb) {
       }
     })
   }
-  events.on(video, 'canplay', ready)
 
   function addSource(type, path) {
     var source = document.createElement('source')
