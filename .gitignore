@@ -2,6 +2,5 @@ bower_components
 node_modules
 *.log
 .DS_Store
-bundle.js
 assets/
 !assets/ballet.mp4
