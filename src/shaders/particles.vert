@@ -1,5 +1,6 @@
 precision mediump float;
 uniform sampler2D data;
+// uniform vec2 mouse;
 uniform vec2 resolution;
 attribute vec2 uv;
 varying float vSize;
@@ -12,7 +13,8 @@ void main() {
   float dist = length((position*0.5+0.5) - 0.5);
   dist = smoothstep(0.5, 0.0, dist);
 
-  position.x *= resolution.y / resolution.x;
+  float aspect = resolution.y / resolution.x;
+  position.x *= aspect;
   float motion = size(vec2(tData.z, tData.w*0.5));
   
   float pSize = dist * motion;

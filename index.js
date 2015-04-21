@@ -21,12 +21,15 @@ const gl = createContext({
   alpha: false, antialias: false
 })
 const canvas = gl.canvas
-// const dpr = Math.min(1.0, window.devicePixelRatio)
+
 const fit = fitter(canvas, () => {
   return [ window.innerWidth, window.innerHeight ]
     .map(x => Math.min(x, 500))
-}, 0.8)
+}, 1)
+
 const engine = createEngine(gl)
+const resolution = [ 1, 1 ]
+const deviceResolution = [ 1, 1 ]
 
 require('domready')(() => {
   const resize = () => {
@@ -40,6 +43,13 @@ require('domready')(() => {
       right: '0',
       position: 'absolute'
     })
+
+    const scale = fit.scale
+    deviceResolution[0] = gl.drawingBufferWidth
+    deviceResolution[1] = gl.drawingBufferHeight
+    resolution[0] = deviceResolution[0] / scale
+    resolution[1] = deviceResolution[1] / scale
+    engine.resolution = resolution
   }
   window.addEventListener('resize', resize, false)
   resize()
@@ -72,9 +82,9 @@ require('domready')(() => {
 
 
 function draw(dt) {
-  const width = gl.drawingBufferWidth
-  const height = gl.drawingBufferHeight
-  gl.viewport(0, 0, width, height)
+  
+
+  gl.viewport(0, 0, deviceResolution[0], deviceResolution[1])
 
   gl.disable(gl.DEPTH_TEST)
   gl.disable(gl.CULL_FACE)
@@ -82,6 +92,5 @@ function draw(dt) {
 
   // gl.clearColor(1, 1, 1, 1)
   // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
-  
   engine(dt)
 }

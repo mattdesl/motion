@@ -5,6 +5,7 @@ const random = require('gl-vec2/random')
 const getPixels = require('gl-texture2d-pixels')
 const triangle = require('a-big-triangle')
 const createShader = require('gl-shader')
+const mouse = require('touch-position')()
 
 const logic = glslify('./shaders/logic.frag')
 const pointVert = glslify('./shaders/particles.vert')
@@ -31,61 +32,68 @@ export default function(gl) {
   })
 
   const r = [0, 0]
+  const mouseVec = [0, 0]
   let time = 0
   let motion
-  particles.populate(rebirth)
+  let resolution
+  particles.populate(repopulate)
 
-  Object.defineProperty(render, 'motion', {
-    get() {
-      return motion
+  Object.defineProperties(render, {
+    motion: {
+      get() {
+        return motion
+      },
+      set(tex) {
+        motion = tex
+      }
     },
-    set(tex) {
-      motion = tex
+    resolution: {
+      get() {
+        return resolution
+      },
+      set(res) {
+        resolution = res
+      }
     }
   })
 
   return render
 
-  function rebirth(u, v, data) {
-    // var moving = false
-    // if (pixels) {
-    //   moving = true
-    //   const i = u + (v * particles.shape[0])
-    //   const px = pixels[i*4 + 0]/255
-    //   const py = pixels[i*4 + 1]/255
-    //   const vx = pixels[i*4 + 2]/255
-    //   const vy = pixels[i*4 + 3]/255
-
-    //   copy(data, px, py, vx, vy)
-
-    //   // if (px < 0.0)
-    //   //   moving = false
-    //   // data[2] === 0 || data[3] === 0
-    // }
-
-    // if (!moving) {
-      random(r, Math.random())
-      data[0] = r[0]
-      data[1] = r[1]
-      // data[0] = Math.random()*2-1
-      // data[1] = Math.random()*2-1
-    // }
-    // data[2] = 0
-    // data[3] = 0
+  function repopulate(u, v, data) {
+    random(r, Math.random())
+    data[0] = r[0]
+    data[1] = r[1]
   }
 
   function render(dt) {
     time += dt / 1000
     const width  = gl.drawingBufferWidth
     const height = gl.drawingBufferHeight
-    const resolution = [width, height]
+    const deviceResolution = [width, height]
 
     gl.disable(gl.BLEND)
     if (motion) 
       motion.bind(1)
 
+  
+    const midx = window.innerWidth/2
+    const midy = window.innerHeight/2
+    mouseVec[0] = ((mouse[0] - midx) / (resolution[0]/2))
+    mouseVec[1] = ((mouse[1] - midy) / (-resolution[1]/2))
+
+    // mouseVec[0] = (((mouse[0] + window.innerWidth/2) / resolution[0]) * 2 - 1)
+    // mouseVec[0] += (deviceResolution[0]/deviceResolution[1])
+    // mouseVec[1] = (mouse[1] / window.innerHeight) * -2 + 1
+    // mouseVec[0] *=
+
+  // uv.x -= aspect/2.0 - 0.5;
+    // mouseVec[1] *= 2
+
     particles.step(function(uniforms) {
       uniforms.motion = 1
+      uniforms.mouse = mouseVec
+      uniforms.motionResolution = particles.shape
+      uniforms.resolution = deviceResolution
       uniforms.time = time
     })
 
@@ -98,22 +106,14 @@ export default function(gl) {
     quadShader.bind()
     quadShader.uniforms.time = time
     quadShader.uniforms.motion = 1
-    quadShader.uniforms.resolution = resolution
+    quadShader.uniforms.resolution = deviceResolution
     triangle(gl)
     
-    // repopTimer += dt
-    // if (repopTimer > 3000) {
-    //   repopTimer = 0
-    //   gl.viewport(0, 0, particles.shape[0], particles.shape[1])
-    //   pixels = getPixels(particles.curr.color[0])
-    //   particles.populate(rebirth)
-    //   gl.viewport(0, 0, width, height)
-    // }
-
     particles.draw(function(uniforms) {
+      uniforms.mouse = mouseVec
       uniforms.motion = 1
       uniforms.time = time
-      uniforms.resolution = resolution
+      uniforms.resolution = deviceResolution
     })
   }
 

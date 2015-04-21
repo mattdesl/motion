@@ -6,12 +6,11 @@ module.exports = function(gl, cb) {
   cb = cb || noop
 
   const video = document.createElement('video')
-  video.setAttribute('loop', true)
-  video.setAttribute('muted', 'muted')
-  addSource('video/mp4', 'assets/ballet2.mp4')
+  // video.setAttribute('loop', true)
+  // video.setAttribute('muted', 'muted')
+  addSource('video/mp4', 'assets/ballet2_1.mp4')
 
   const ready = () => {
-    console.log(video.width, video.height)
     const texture = createTexture(gl, video)
     texture.minFilter = gl.LINEAR
     texture.update = update.bind(null, texture)
@@ -26,6 +25,18 @@ module.exports = function(gl, cb) {
   events.on(video, 'error', err => {
     cb(new Error(err))
     cb = noop
+  })
+  video.addEventListener('ended', () => {
+    console.log("Ended event")
+    video.currentTime = 0
+    video.play()
+  }, false)
+  events.on(video, 'timeupdate', () => {
+    //grr.. firefox 'ended' and 'loop' not working
+    if (Math.floor(video.currentTime) >= Math.floor(video.duration)) {
+      video.currentTime = 0
+      video.play()
+    }
   })
   events.on(video, 'canplay', ready)
 

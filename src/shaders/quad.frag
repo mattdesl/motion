@@ -6,6 +6,7 @@ varying vec2 screenPosition;
 
 vec3 sample(vec2 uv);
 #pragma glslify: blur = require('glsl-hash-blur', iterations=5, sample=sample)
+
 vec3 sample(vec2 uv) {
   return texture2D(motion, uv).bbb;
 }
