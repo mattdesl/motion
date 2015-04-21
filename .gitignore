@@ -4,3 +4,4 @@ node_modules
 .DS_Store
 assets/
 !assets/ballet.mp4
+!assets/ballet.webm
