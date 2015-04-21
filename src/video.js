@@ -8,10 +8,12 @@ module.exports = function(gl, cb) {
   const video = document.createElement('video')
   video.setAttribute('loop', true)
   video.setAttribute('muted', 'muted')
-  addSource('video/mp4', 'assets/motion-rgb3.mp4')
+  addSource('video/mp4', 'assets/ballet2.mp4')
 
   const ready = () => {
+    console.log(video.width, video.height)
     const texture = createTexture(gl, video)
+    texture.minFilter = gl.LINEAR
     texture.update = update.bind(null, texture)
     texture.video = video
     video.play()

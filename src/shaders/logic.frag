@@ -37,7 +37,7 @@ void main() {
 
   float dist = length((position*0.5+0.5) - 0.5);
   if (dist < 0.5) {
-    velocity += movement.xy * 0.001;
+    velocity += movement.xy * 0.0005;
   } else { //re-birth the particles
     float r = random(uv) * 2.0 - 1.0;
     // float r = 1.0;
@@ -50,9 +50,8 @@ void main() {
   position += velocity;
 
   //how much to affect gravity
-  float gAffect = smoothstep(0.6, 0.81, abs(movement.x));
-
-  velocity -= vec2(0.0, 0.001) * gAffect;
+  float gAffect = smoothstep(0.4, 0.91, abs(movement.x));
+  // velocity -= vec2(0.0, 0.001) * gAffect;
   velocity *= 0.99;
   // if (position.y < -1.0) {
     // position.y = 1.0;

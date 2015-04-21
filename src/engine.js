@@ -112,6 +112,7 @@ export default function(gl) {
 
     particles.draw(function(uniforms) {
       uniforms.motion = 1
+      uniforms.time = time
       uniforms.resolution = resolution
     })
   }
