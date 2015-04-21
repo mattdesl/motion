@@ -4,8 +4,15 @@ import createLoop from 'raf-loop'
 import createEngine from './src/engine'
 import createVideo from './src/video'
 import createImage from './src/image'
+import createAudio from './src/audio'
+import renderIntro from './src/intro'
+
 import assign from 'object-assign'
 import colorStyle from 'color-style'
+import parallel from 'run-parallel'
+
+const Promise = global.Promise || require('es6-promise').Promise
+const promisify = require('es6-denodeify')(Promise)
 
 const clear = require('./src/clear')
 const background = clear.rgb.map(x => x*255)
@@ -45,29 +52,24 @@ require('domready')(() => {
   const loop = createLoop(draw)
   clear(gl)
 
-  createVideo(gl, (err, texture) => {
-    if (err)
-      throw err
+  Promise.all([
+    promisify(createAudio)(),
+    promisify(createVideo.bind(null, gl))()
+  ]).then(([audio, texture]) => {
     engine.motion = texture
-    loop.on('tick', texture.update.bind(texture))
     console.log("Playing")
 
-    if (texture.video) {
-      // const video = texture.video
-      // document.body.appendChild(video)
-      // video.style.width = '320px'
-      // video.style.height = 'auto'
-      // video.style.position = 'fixed'
-      // video.style.top = '0'
-      // video.style.left = '0'
-      // video.style.zIndex = 100
-      let time = 0
-      let duration = 1
-    }
+    audio.play()
+    renderIntro()
+    setTimeout(function() {
+      texture.video.play()
+    }, 2000)
+
+    loop.on('tick', texture.update.bind(texture))
     loop.start()
   })
-
 })
+
 
 function draw(dt) {
   const width = gl.drawingBufferWidth

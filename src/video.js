@@ -16,7 +16,6 @@ module.exports = function(gl, cb) {
     texture.minFilter = gl.LINEAR
     texture.update = update.bind(null, texture)
     texture.video = video
-    video.play()
     cb(null, texture)
     cb = noop
   }
