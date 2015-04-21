@@ -32,6 +32,10 @@ const resolution = [ 1, 1 ]
 const deviceResolution = [ 1, 1 ]
 
 require('domready')(() => {
+  window.addEventListener('touchstart', ev => {
+    ev.preventDefault()
+  })
+
   const resize = () => {
     fit()
     
@@ -82,15 +86,10 @@ require('domready')(() => {
 
 
 function draw(dt) {
-  
-
   gl.viewport(0, 0, deviceResolution[0], deviceResolution[1])
 
   gl.disable(gl.DEPTH_TEST)
   gl.disable(gl.CULL_FACE)
   gl.disable(gl.BLEND)
-
-  // gl.clearColor(1, 1, 1, 1)
-  // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
   engine(dt)
 }
