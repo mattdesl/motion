@@ -1,23 +1,29 @@
 import createTexture from 'gl-texture2d'
 import events from 'dom-events'
+import once from 'once'
 const noop = () => {}
 
 module.exports = function(gl, cb) {
   cb = cb || noop
 
   const video = document.createElement('video')
-  // video.setAttribute('loop', true)
-  // video.setAttribute('muted', 'muted')
-  addSource('video/mp4', 'assets/ballet2_1.mp4')
+  const src = 'assets/ballet2.mp4'
+  video.setAttribute('loop', true)
+  video.setAttribute('muted', 'muted')
+  video.src = src
+  // addSource('video/mp4', src)
+  video.load()
 
-  const ready = () => {
+  const ready = once(() => {
     const texture = createTexture(gl, video)
     texture.minFilter = gl.LINEAR
     texture.update = update.bind(null, texture)
     texture.video = video
+    console.log("Ready.")
+
     cb(null, texture)
     cb = noop
-  }
+  })
 
   if (video.readyState > video.HAVE_FUTURE_DATA) 
     ready()
@@ -26,19 +32,22 @@ module.exports = function(gl, cb) {
     cb(new Error(err))
     cb = noop
   })
-  video.addEventListener('ended', () => {
-    console.log("Ended event")
-    video.currentTime = 0
-    video.play()
-  }, false)
-  events.on(video, 'timeupdate', () => {
-    //grr.. firefox 'ended' and 'loop' not working
-    if (Math.floor(video.currentTime) >= Math.floor(video.duration)) {
-      video.currentTime = 0
-      video.play()
-    }
-  })
+  
+  const ff = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+  if (ff) {
+    fixLoop(video)
+  }
   events.on(video, 'canplay', ready)
+
+  function fixLoop(video) {
+    events.on(video, 'timeupdate', () => {
+      //grr.. firefox 'ended' and 'loop' not working
+      if (Math.round(video.currentTime) >= Math.round(video.duration)) {
+        video.src = src
+        video.play()
+      }
+    })
+  }
 
   function addSource(type, path) {
     var source = document.createElement('source')
