@@ -4,4 +4,5 @@ module.exports = function(gl) {
   gl.clear(gl.COLOR_BUFFER_BIT)
 }
 
-module.exports.rgb = [25/255, 50/255, 55/255]
+module.exports.rgb = [0.13, 0.13, 0.13]
+// module.exports.rgb = [25/255, 50/255, 55/255]

@@ -14,8 +14,8 @@ void main() {
   float tmin = 0.0;
   float tmax = 0.6;
   float hue = mix(tmin, tmax, vSize) + sin(time);
-  vec3 rgb = hsl2rgb(hue*0.3 + 0.0, 1.0, mix(0.0, 0.45, vSize));
+  vec3 rgb = hsl2rgb(hue*0.2 + 0.0, 1.0, mix(0.0, 0.45, vSize));
 
-  gl_FragColor = vec4(d * vec3(rgb), 1.0);
+  gl_FragColor = vec4(d * vec3(rgb * 0.4), 1.0);
   // gl_FragColor = vec4(texture2D(motion, p).rgb, 1.0);
 }
